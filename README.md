@@ -1,50 +1,114 @@
 # 🕵️‍♂️ Codebase Onboarding Agent
 
-A premium, LangGraph-powered GitHub repository analysis tool designed to generate senior-developer onboarding reports instantly. Built completely with modern async Python, Streamlit, ChromaDB, and Google's Gemini 2.0 Flash context modeling.
+![Hero Image](static/assets/hero.png)
 
-## ✨ Features
+> **Unlock the secrets of any codebase in seconds.** The Codebase Onboarding Agent is a high-fidelity, autonomous intelligence engine designed to transform massive, complex GitHub repositories into structured, senior-developer-level onboarding reports.
 
-- 🧠 **LangGraph Orchestration**: Employs a robust, Directed Acyclic Graph (DAG) state machine to break down unknown codebases logically.
-- 🌳 **Tree-sitter Parsing**: Lazily loads and parses structure via ASTs for `Python`, `JavaScript`, and `TypeScript`.
-- 🔍 **Semantic Search Engine**: Incorporates `ChromaDB` offline vector store and Gemini embeddings for lightning-fast codebase search.
-- 💅 **Custom UI Architecture**: A deeply integrated FastAPI backend serving a gorgeous, dark-mode Tailwind CSS Single Page Application via WebSockets.
-- 🤖 **Gemini 2.0 Native**: Skips heavy LangChain wrappers and integrates directly with the `google-generativeai` SDK.
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-2D3748?style=for-the-badge&logo=langchain)](https://langchain-ai.github.io/langgraph/)
+[![OpenRouter](https://img.shields.io/badge/OpenRouter-Qwen_3.6-6929F4?style=for-the-badge)](https://openrouter.ai/)
+[![ChromaDB](https://img.shields.io/badge/ChromaDB-522D80?style=for-the-badge)](https://www.trychroma.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-## 🚀 Getting Started
+---
 
-Ensure you have Python 3.10+ installed and a valid Gemini API key.
+## ✨ Key Features
 
-1. **Clone the Repo**
+- 🧠 **Autonomous DAG Orchestration**: Powered by **LangGraph**, the agent executes a sophisticated, multi-stage Directed Acyclic Graph (DAG) to decompose codebases logicallly.
+- 🌳 **Polyglot AST Extraction**: Utilizes **Tree-sitter** for lazy-loading and deep structural analysis of `Python`, `JavaScript`, and `TypeScript`.
+- 🔍 **Local Semantic Memory**: Implements **ChromaDB** with **local ONNX-backed embeddings** (`all-MiniLM-L6-v2`) for instant, private, and free semantic code search.
+- ⚡ **Real-time Pipeline Streaming**: A modern **FastAPI** backend streams live analysis progress directly to the UI via **WebSockets**.
+- 💅 **High-Fidelity Dashboard**: A gorgeous, dark-mode SPA built with **Tailwind CSS**, featuring dynamic metrics, interactive module maps, and architecture visualizations.
+- 🤖 **Infinite Context via OpenRouter**: Seamlessly routes through 100+ models, currently optimized for **Qwen 3.6 Plus Preview** to handle enterprise-scale repositories.
+
+---
+
+## 🏗️ System Architecture
+
+The agent operates through a strictly ordered execution pipeline, ensuring information scales from raw structural data to high-level architectural insights.
+
+```mermaid
+graph TD
+    A[User Inputs GitHub URL] -->|WebSocket| B(FastAPI Server)
+    B --> C{LangGraph Workflow}
+    
+    subgraph "Agent DAG Sequence"
+    C --> D[parse_structure]
+    D --> E[identify_tech_stack]
+    E --> F[find_entry_points]
+    F --> G[summarize_modules]
+    G --> H[trace_data_flow]
+    H --> I[extract_caveats]
+    I --> J[compile_report]
+    end
+    
+    J -->|JSON State| K[Tailwind Dashboard]
+    D -.->|Sync| L[(ChromaDB Vector Store)]
+    L -.->|REST| M[/api/search]
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- **Python 3.10+** (Required for LangGraph and Async FastAPI)
+- **Node.js / NPM** (Required for Tailwind CSS compilation)
+- **Git** (Installed on system PATH)
+
+### 1. Installation
 ```bash
 git clone https://github.com/KindaJayant/codebase-onboarding-agent.git
 cd codebase-onboarding-agent
-```
-
-2. **Install Dependencies**
-```bash
 pip install -r requirements.txt
 ```
 
-3. **Environment Variables**
+### 2. Configure Environment
 Create a `.env` file in the root directory:
 ```env
-GEMINI_API_KEY=your_gemini_api_key_here
+# Get yours at https://openrouter.ai/keys
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
-4. **Launch Application**
+### 3. Build Styles & Launch
 ```bash
+# Build Tailwind CSS (v3)
+npx tailwindcss -i ./static/input.css -o ./static/output.css
+
+# Launch the Backend Engine
 uvicorn main:app --reload
 ```
-Open up **`http://localhost:8000`** in your browser, punch in a Github repository link, and let the agent get to work!
+
+Visit **`http://localhost:8000`** and begin your first analysis.
+
+---
 
 ## 📂 Project Structure
 
-- `main.py`: Contains the FastAPI server, WebSocket endpoints, and REST routes.
-- `static/`: Contains the Tailwind CSS compiled files, `index.html`, and Vanilla JS application logic.
-- `agent/`: LangGraph logic (`nodes.py`, `graph.py`, `state.py`, `prompts.py`).
-- `utils/`: Utilities for cloning (`repo.py`), code ast (`parser.py`), and semantic indexing (`vectorstore.py`).
-- `db/`: Locally instantiated ChromaDB index directory.
+- `main.py`: The central FastAPI gateway handling HTTP, WebSockets, and environment orchestration.
+- `agent/`:
+    - `graph.py`: Defines the LangGraph topology and state logic.
+    - `nodes.py`: The implementation layer for each LLM-backed analysis stage.
+    - `prompts.py`: Highly-tuned system instructions for senior developer personas.
+- `utils/`:
+    - `repo.py`: Robust Git management and local OS temp buffering logic.
+    - `parser.py`: Multi-language Tree-sitter AST extraction utilities.
+    - `vectorstore.py`: Local ChromaDB indexing and ONNX embedding logic.
+- `static/`: The Vanilla JavaScript SPA, including Tailwind source and compiled outputs.
+- `db/`: Locally persistent vector index directory.
+
+---
+
+## 🛠️ Technical Deep Dive
+
+### Embedding Strategy
+By default, this agent uses **`all-MiniLM-L6-v2`** via the `chromadb` default embedding function. This runs completely on your CPU, ensuring that your codebase structure is never sent to a cloud embedding API, preserving your privacy and OpenRouter quotas.
+
+### Rate Limit Resilience
+The `nodes.py` engine features an **Exponential Backoff** retry loop. If OpenRouter's free-tier proxies hit a 429 Rate Limit, the agent will gracefully pause for 15 seconds and automatically resume, preventing UI crashes.
+
+---
 
 ## 🛡️ License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) for details. Developed with ❤️ for the global open-source community.

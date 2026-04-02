@@ -20,12 +20,24 @@ from utils import parser as parser_utils
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
+import time
+
 def _call_gemini(api_key: str, prompt: str) -> str:
     """Send a single prompt to Gemini 2.0 Flash and return the text response."""
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
-    return response.text
+    
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            if "429" in str(e) and attempt < max_retries - 1:
+                print(f"Rate limit (429) hit. Pausing 15 seconds... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(15)
+            else:
+                raise e
 
 
 def _extract_json(text: str) -> dict:
@@ -65,6 +77,12 @@ def _collect_code_info(repo_path: str) -> str:
                 parts.append(f"  imports: {', '.join(info['imports'][:10])}")
             if parts:
                 summaries.append(f"📄 {rel}\n" + "\n".join(parts))
+            
+            # Protect Free Tier Limits
+            if len("\n".join(summaries)) > 20000:
+                summaries.append("\n--- [TRUNCATED: Repository too large. Preserving API limits.] ---")
+                return "\n\n".join(summaries)
+                
     return "\n\n".join(summaries) if summaries else "(tree-sitter analysis unavailable)"
 
 

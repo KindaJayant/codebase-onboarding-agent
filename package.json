@@ -1,0 +1,25 @@
+{
+  "name": "langchain-project",
+  "version": "1.0.0",
+  "description": "A premium, LangGraph-powered GitHub repository analysis tool designed to generate senior-developer onboarding reports instantly. Built completely with modern async Python, Streamlit, ChromaDB, and Google's Gemini 2.0 Flash context modeling.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KindaJayant/codebase-onboarding-agent.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KindaJayant/codebase-onboarding-agent/issues"
+  },
+  "homepage": "https://github.com/KindaJayant/codebase-onboarding-agent#readme",
+  "devDependencies": {
+    "@tailwindcss/container-queries": "0.1.1",
+    "@tailwindcss/forms": "0.5.11",
+    "tailwindcss": "3.4.19"
+  }
+}

@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .glow-button {
+      box-shadow: 0 0 20px rgba(77, 142, 255, 0.3);
+  }
+  .dot-pattern {
+      background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+  }
+}
+
+@layer base {
+  .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+  }
+  .spinner {
+      animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+      100% { transform: rotate(360deg); }
+  }
+  
+  /* Custom scrollbar for markdown content */
+  ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+      background: #1c2026; 
+  }
+  ::-webkit-scrollbar-thumb {
+      background: #424754; 
+      border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+      background: #8c909f; 
+  }
+  
+  .markdown-body h1 { font-size: 2em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; border-bottom: 1px solid #31353c; padding-bottom: 0.3em; }
+  .markdown-body h2 { font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+  .markdown-body h3 { font-size: 1.25em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+  .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
+  .markdown-body ul { list-style-type: disc; margin-left: 2em; margin-bottom: 1em; }
+  .markdown-body ol { list-style-type: decimal; margin-left: 2em; margin-bottom: 1em; }
+  .markdown-body a { color: #4da6ff; text-decoration: none; }
+  .markdown-body a:hover { text-decoration: underline; }
+  .markdown-body code { background-color: #262a31; padding: 0.2em 0.4em; border-radius: 3px; font-family: "JetBrains Mono", monospace; font-size: 85%; }
+  .markdown-body pre { background-color: #262a31; padding: 1em; border-radius: 6px; overflow-x: auto; margin-bottom: 1em; }
+  .markdown-body pre code { background-color: transparent; padding: 0; border-radius: 0; }
+  .markdown-body blockquote { border-left: 4px solid #4da6ff; padding-left: 1em; color: #8c909f; margin-bottom: 1em; }
+}

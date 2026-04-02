@@ -223,14 +223,14 @@
                         </div>
                     </div>
 
-                    <!-- Step 6: Gotchas -->
-                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-extract_gotchas">
+                    <!-- Step 6: Caveats -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-extract_caveats">
                         <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
                             <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
                         </div>
                         <div>
-                            <h3 class="font-bold text-lg text-on-surface">Extracting gotchas</h3>
-                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Identifying anti-patterns...</p>
+                            <h3 class="font-bold text-lg text-on-surface">Identifying caveats</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Scanning for risk areas...</p>
                         </div>
                     </div>
 
@@ -293,9 +293,9 @@
                         <span class="material-symbols-outlined text-lg">swap_horiz</span>
                         Data Flow
                     </a>
-                    <a href="#gotchas" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                    <a href="#caveats" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
                         <span class="material-symbols-outlined text-lg">warning</span>
-                        Gotchas
+                        Caveats & Risks
                     </a>
                     <a href="#search" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
                         <span class="material-symbols-outlined text-lg">search</span>
@@ -323,7 +323,7 @@
                         <div id="dash-tech-pills" class="flex items-center gap-2">
                             <!-- Badges will be injected here -->
                         </div>
-                        <div class="text-xs font-mono text-outline/50 ml-4 hidden md:block">/home/runtime/analytics-engine/core-v2</div>
+                        <div class="text-xs font-mono text-outline/50 ml-4 hidden md:block" id="dash-repo-path"></div>
                     </div>
                     <div class="flex items-center gap-3">
                         <button id="btn-clear" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors text-sm font-medium">
@@ -339,36 +339,36 @@
                 <div class="flex-grow overflow-y-auto p-8 relative">
                     <div class="max-w-5xl mx-auto space-y-12 pb-20">
                         
-                        <!-- NEW DOM: Metrics Row -->
+                        <!-- Dynamic Metrics Row -->
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                            <!-- Card 1 -->
+                            <!-- Card 1: Total Files -->
                             <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
                                 <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Total Files</p>
-                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">142</div>
+                                <div id="metric-total-files" class="text-3xl font-headline font-bold text-on-surface mb-2">—</div>
                                 <div class="flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
-                                    <span class="material-symbols-outlined text-[12px]">trending_up</span> 12% from v2.3
+                                    <span class="material-symbols-outlined text-[12px]">inventory_2</span> Tracked in repo
                                 </div>
                             </div>
-                            <!-- Card 2 -->
+                            <!-- Card 2: Languages -->
                             <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
                                 <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Languages</p>
-                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">3</div>
-                                <p class="text-[10px] text-on-surface-variant/50 font-mono text-ellipsis overflow-hidden whitespace-nowrap">TS (80%), Python (15%), SQL (5%)</p>
+                                <div id="metric-languages" class="text-3xl font-headline font-bold text-on-surface mb-2">—</div>
+                                <p id="metric-lang-breakdown" class="text-[10px] text-on-surface-variant/50 font-mono text-ellipsis overflow-hidden whitespace-nowrap">Analyzing...</p>
                             </div>
-                            <!-- Card 3 -->
+                            <!-- Card 3: Lines of Code -->
                             <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
-                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Cyclomatic Density</p>
-                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">14.2</div>
-                                <div class="flex items-center gap-1 text-[10px] text-amber-500 font-mono">
-                                    <span class="material-symbols-outlined text-[12px]">info</span> Moderate complexity
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Lines of Code</p>
+                                <div id="metric-loc" class="text-3xl font-headline font-bold text-on-surface mb-2">—</div>
+                                <div class="flex items-center gap-1 text-[10px] text-accent font-mono">
+                                    <span class="material-symbols-outlined text-[12px]">code</span> Source files
                                 </div>
                             </div>
-                            <!-- Card 4 -->
+                            <!-- Card 4: Dependencies -->
                             <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
-                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Coverage</p>
-                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">94.8%</div>
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Dependencies</p>
+                                <div id="metric-deps" class="text-3xl font-headline font-bold text-on-surface mb-2">—</div>
                                 <div class="flex items-center gap-1 text-[10px] text-secondary font-mono">
-                                    <span class="material-symbols-outlined text-[12px]">verified</span> Enterprise Standard
+                                    <span class="material-symbols-outlined text-[12px]">package_2</span> Third-party packages
                                 </div>
                             </div>
                         </div>
@@ -417,13 +417,13 @@
                             <div id="dash-data-flow" class="markdown-body bg-surface p-8 rounded-xl border border-outline-variant/10"></div>
                         </div>
 
-                        <!-- TAB: Gotchas -->
-                        <div id="tab-gotchas" class="tab-content hidden">
+                        <!-- TAB: Caveats & Risks -->
+                        <div id="tab-caveats" class="tab-content hidden">
                             <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
-                                <span class="material-symbols-outlined">warning</span> Critical Gotchas
+                                <span class="material-symbols-outlined">warning</span> Caveats & Risks
                             </div>
                             <div class="bg-[#2A1E0D] border-l-4 border-amber-500 p-8 rounded-r-xl rounded-l-sm">
-                                <div id="dash-gotchas" class="markdown-body text-amber-50/90"></div>
+                                <div id="dash-caveats" class="markdown-body text-amber-50/90"></div>
                             </div>
                         </div>
 

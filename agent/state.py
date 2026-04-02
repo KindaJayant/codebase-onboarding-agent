@@ -11,7 +11,7 @@ class AgentState(TypedDict, total=False):
     # ── inputs (set once at invocation) ──────────────────────────────────
     repo_url: str
     repo_name: str
-    api_key: str            # Gemini API key (passed via state so nodes can use it)
+    api_key: str            # OpenRouter API key (passed via state so nodes can use it)
 
     # ── intermediate results ─────────────────────────────────────────────
     repo_path: str           # local path to the cloned repo
@@ -22,7 +22,10 @@ class AgentState(TypedDict, total=False):
     entry_points: str        # markdown from LLM
     module_summaries: str    # markdown from LLM
     data_flow: str           # markdown from LLM
-    gotchas: str             # markdown from LLM
+    caveats: str             # markdown from LLM (formerly "gotchas")
+
+    # ── computed metrics ─────────────────────────────────────────────────
+    metrics: dict            # {total_files, languages, loc, dependencies}
 
     # ── final output ─────────────────────────────────────────────────────
     report: str              # full compiled onboarding report

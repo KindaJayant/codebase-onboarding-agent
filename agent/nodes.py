@@ -9,6 +9,7 @@ Each node:
 import json
 import os
 import traceback
+import tempfile
 
 from google import generativeai as genai
 
@@ -74,7 +75,9 @@ def parse_structure(state: dict) -> dict:
     try:
         repo_name = state['repo_name']
         repo_url = state['repo_url']
-        repo_path = os.path.abspath(os.path.join('./temp', repo_name))
+        
+        temp_dir = tempfile.mkdtemp(prefix="codebase_agent_")
+        repo_path = os.path.abspath(os.path.join(temp_dir, repo_name))
 
         repo_utils.clone_repo(repo_url, repo_path)
 

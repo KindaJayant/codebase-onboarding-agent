@@ -11,7 +11,7 @@ from agent.graph import build_graph
 from utils import vectorstore
 
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 app = FastAPI()
 
@@ -28,8 +28,8 @@ def read_root():
 @app.websocket("/ws/analyze")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    if not GEMINI_API_KEY:
-        await websocket.send_json({"type": "error", "message": "No API key found in server."})
+    if not OPENROUTER_API_KEY:
+        await websocket.send_json({"type": "error", "message": "No OPENROUTER_API_KEY found in .env file."})
         await websocket.close()
         return
 
@@ -50,15 +50,11 @@ async def websocket_endpoint(websocket: WebSocket):
         initial_state = {
             "repo_url": repo_url,
             "repo_name": repo_name,
-            "api_key": GEMINI_API_KEY
+            "api_key": OPENROUTER_API_KEY
         }
         
-        # Async stream over the graph
-        # Wait, LangGraph is sync by default unless we use astream
-        # Since our nodes are sync, we can use astream with threadpool automatically
         final_state = {}
         async for output in graph.astream(initial_state):
-            # output is a dict like {"node_name": {"state_key": "val"}}
             for node_name, updates in output.items():
                 if updates.get('error'):
                     await websocket.send_json({"type": "error", "message": updates['error']})
@@ -70,16 +66,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     "node": node_name,
                     "message": f"Completed {node_name}"
                 })
-                # Keep accumulating state
                 final_state.update(updates)
 
-        # Build Vector Store
+        # Build Vector Store (now uses local embeddings, no API key needed)
         await websocket.send_json({"type": "progress", "node": "vectorstore", "message": "Indexing vectorstore..."})
         try:
-            # this is a sync function so we might want to run in executor, but for demo it's ok
             await asyncio.to_thread(
                 vectorstore.initialize_vector_store,
-                final_state['repo_path'], repo_name, GEMINI_API_KEY
+                final_state['repo_path'], repo_name
             )
         except Exception as e:
             print("Vectorstore error:", e)
@@ -103,7 +97,6 @@ def search_api(request: SearchRequest):
     results = vectorstore.search_codebase(
         request.repo_name,
         request.query,
-        GEMINI_API_KEY
     )
     return results
 

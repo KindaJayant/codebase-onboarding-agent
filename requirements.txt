@@ -1,0 +1,10 @@
+streamlit
+langgraph
+google-generativeai
+gitpython
+tree-sitter
+tree-sitter-python
+tree-sitter-javascript
+tree-sitter-typescript
+chromadb
+python-dotenv

@@ -405,6 +405,40 @@
                 <div class="flex-grow overflow-y-auto p-8 relative">
                     <div class="max-w-5xl mx-auto space-y-12 pb-20">
                         
+                        <!-- NEW DOM: Metrics Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                            <!-- Card 1 -->
+                            <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Total Files</p>
+                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">142</div>
+                                <div class="flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
+                                    <span class="material-symbols-outlined text-[12px]">trending_up</span> 12% from v2.3
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Languages</p>
+                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">3</div>
+                                <p class="text-[10px] text-on-surface-variant/50 font-mono text-ellipsis overflow-hidden whitespace-nowrap">TS (80%), Python (15%), SQL (5%)</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Cyclomatic Density</p>
+                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">14.2</div>
+                                <div class="flex items-center gap-1 text-[10px] text-amber-500 font-mono">
+                                    <span class="material-symbols-outlined text-[12px]">info</span> Moderate complexity
+                                </div>
+                            </div>
+                            <!-- Card 4 -->
+                            <div class="bg-surface p-5 rounded-xl border border-outline-variant/10 shadow-lg">
+                                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-wider mb-2">Coverage</p>
+                                <div class="text-3xl font-headline font-bold text-on-surface mb-2">94.8%</div>
+                                <div class="flex items-center gap-1 text-[10px] text-secondary font-mono">
+                                    <span class="material-symbols-outlined text-[12px]">verified</span> Enterprise Standard
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- TAB: Overview -->
                         <div id="tab-overview" class="tab-content block">
                             <!-- Main Report Markdown from Agent -->

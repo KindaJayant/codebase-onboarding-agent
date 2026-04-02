@@ -10,31 +10,37 @@ import json
 import os
 import traceback
 import tempfile
+import time
 
-from google import generativeai as genai
+from openai import OpenAI
 
 from . import prompts
 from utils import repo as repo_utils
 from utils import parser as parser_utils
 
+# ── Model Configuration ─────────────────────────────────────────────────────
+OPENROUTER_MODEL = "qwen/qwen3.6-plus-preview:free"
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
-import time
-
-def _call_gemini(api_key: str, prompt: str) -> str:
-    """Send a single prompt to Gemini 2.0 Flash and return the text response."""
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-2.0-flash")
+def _call_llm(api_key: str, prompt: str) -> str:
+    """Send a single prompt to OpenRouter and return the text response."""
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+    )
     
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            response = model.generate_content(prompt)
-            return response.text
+            response = client.chat.completions.create(
+                model=OPENROUTER_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return response.choices[0].message.content
         except Exception as e:
             if "429" in str(e) and attempt < max_retries - 1:
-                print(f"Rate limit (429) hit. Pausing 15 seconds... (Attempt {attempt+1}/{max_retries})")
+                print(f"Rate limit hit. Pausing 15s... (Attempt {attempt+1}/{max_retries})")
                 time.sleep(15)
             else:
                 raise e
@@ -42,7 +48,6 @@ def _call_gemini(api_key: str, prompt: str) -> str:
 
 def _extract_json(text: str) -> dict:
     """Best-effort JSON extraction from LLM output."""
-    # Strip markdown code fences if present
     if '```json' in text:
         text = text.split('```json', 1)[1].split('```', 1)[0]
     elif '```' in text:
@@ -114,14 +119,14 @@ def parse_structure(state: dict) -> dict:
 
 
 def identify_tech_stack(state: dict) -> dict:
-    """Ask Gemini to identify the tech stack and return parsed JSON."""
+    """Ask LLM to identify the tech stack and return parsed JSON."""
     if state.get('error'):
         return {}
     prompt = prompts.TECH_STACK_PROMPT.format(
         structure=state['structure'],
         key_files_content=state['key_files_content'],
     )
-    raw = _call_gemini(state['api_key'], prompt)
+    raw = _call_llm(state['api_key'], prompt)
     return {'tech_stack': _extract_json(raw)}
 
 
@@ -133,7 +138,7 @@ def find_entry_points(state: dict) -> dict:
         key_files_content=state['key_files_content'],
         code_info=state.get('code_info', ''),
     )
-    return {'entry_points': _call_gemini(state['api_key'], prompt)}
+    return {'entry_points': _call_llm(state['api_key'], prompt)}
 
 
 def summarize_modules(state: dict) -> dict:
@@ -143,7 +148,7 @@ def summarize_modules(state: dict) -> dict:
         structure=state['structure'],
         key_files_content=state['key_files_content'],
     )
-    return {'module_summaries': _call_gemini(state['api_key'], prompt)}
+    return {'module_summaries': _call_llm(state['api_key'], prompt)}
 
 
 def trace_data_flow(state: dict) -> dict:
@@ -155,7 +160,7 @@ def trace_data_flow(state: dict) -> dict:
         module_summaries=state.get('module_summaries', ''),
         structure=state['structure'],
     )
-    return {'data_flow': _call_gemini(state['api_key'], prompt)}
+    return {'data_flow': _call_llm(state['api_key'], prompt)}
 
 
 def extract_gotchas(state: dict) -> dict:
@@ -166,7 +171,7 @@ def extract_gotchas(state: dict) -> dict:
         tech_stack=json.dumps(state.get('tech_stack', {}), indent=2),
         key_files_content=state['key_files_content'],
     )
-    return {'gotchas': _call_gemini(state['api_key'], prompt)}
+    return {'gotchas': _call_llm(state['api_key'], prompt)}
 
 
 def compile_report(state: dict) -> dict:
@@ -181,4 +186,4 @@ def compile_report(state: dict) -> dict:
         gotchas=state.get('gotchas', ''),
         structure=state['structure'],
     )
-    return {'report': _call_gemini(state['api_key'], prompt)}
+    return {'report': _call_llm(state['api_key'], prompt)}

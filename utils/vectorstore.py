@@ -1,12 +1,11 @@
 """
 ChromaDB vector store for semantic code search.
-Embeds codebase chunks using Google's Generative AI embedding model
-and provides a query interface.
+Uses ChromaDB's default local ONNX embedding model (all-MiniLM-L6-v2)
+so no external API key is needed for embeddings.
 """
 import os
 import uuid
 import chromadb
-from chromadb.utils.embedding_functions import GoogleGenerativeAiEmbeddingFunction
 
 # Extensions we index
 INDEXABLE_EXTS = {'.py', '.js', '.ts', '.tsx', '.jsx', '.md', '.txt', '.yaml', '.yml', '.json', '.toml', '.cfg'}
@@ -25,16 +24,12 @@ def _sanitize_collection_name(name: str) -> str:
     return name[:63] if len(name) >= 3 else name.ljust(3, '_')
 
 
-def initialize_vector_store(repo_path: str, repo_name: str, api_key: str):
+def initialize_vector_store(repo_path: str, repo_name: str):
     """
-    Walk the repository, chunk each indexable file, embed via Google Generative AI,
-    and upsert into a ChromaDB collection.
+    Walk the repository, chunk each indexable file,
+    and upsert into a ChromaDB collection using default local embeddings.
     """
     col_name = _sanitize_collection_name(repo_name)
-    embedding_fn = GoogleGenerativeAiEmbeddingFunction(
-        api_key=api_key,
-        model_name="models/text-embedding-004",
-    )
 
     # Delete existing collection to re-index fresh
     try:
@@ -42,10 +37,7 @@ def initialize_vector_store(repo_path: str, repo_name: str, api_key: str):
     except Exception:
         pass
 
-    collection = _client.get_or_create_collection(
-        name=col_name,
-        embedding_function=embedding_fn,
-    )
+    collection = _client.get_or_create_collection(name=col_name)
 
     docs, ids, metas = [], [], []
     chunk_size, overlap = 800, 150
@@ -85,18 +77,14 @@ def initialize_vector_store(repo_path: str, repo_name: str, api_key: str):
     return collection
 
 
-def search_codebase(repo_name: str, query: str, api_key: str, n: int = 5):
+def search_codebase(repo_name: str, query: str, n: int = 5):
     """
-    Semantic search over the indexed codebase.
+    Semantic search over the indexed codebase using local embeddings.
     Returns the raw ChromaDB QueryResult dict.
     """
     col_name = _sanitize_collection_name(repo_name)
-    embedding_fn = GoogleGenerativeAiEmbeddingFunction(
-        api_key=api_key,
-        model_name="models/text-embedding-004",
-    )
     try:
-        collection = _client.get_collection(name=col_name, embedding_function=embedding_fn)
+        collection = _client.get_collection(name=col_name)
         return collection.query(query_texts=[query], n_results=n)
     except Exception as e:
         return {'documents': [[]], 'metadatas': [[]], 'error': str(e)}

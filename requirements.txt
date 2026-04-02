@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 langgraph
-google-generativeai
+openai
 gitpython
 tree-sitter
 tree-sitter-python

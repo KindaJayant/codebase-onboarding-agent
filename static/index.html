@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary": "#b1c6f9",
+                        "tertiary-container": "#df7412",
+                        "on-surface-variant": "#c2c6d6",
+                        "on-tertiary-container": "#461f00",
+                        "surface-container-high": "#262a31",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#00285d",
+                        "surface-container-lowest": "#0a0e14",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-bright": "#353940",
+                        "on-primary-fixed": "#001a42",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-secondary": "#182f59",
+                        "on-tertiary": "#502400",
+                        "on-tertiary-fixed": "#311400",
+                        "error": "#ffb4ab",
+                        "primary": "#adc6ff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-container-low": "#181c22",
+                        "outline-variant": "#424754",
+                        "inverse-primary": "#005ac2",
+                        "surface-variant": "#31353c",
+                        "surface-container": "#1c2026",
+                        "secondary-fixed-dim": "#b1c6f9",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "inverse-on-surface": "#2d3137",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-surface": "#dfe2eb",
+                        "inverse-surface": "#dfe2eb",
+                        "primary-container": "#4d8eff",
+                        "surface": "#10141a",
+                        "surface-tint": "#adc6ff",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "background": "#10141a",
+                        "secondary-container": "#304671",
+                        "on-primary": "#002e6a",
+                        "surface-container-highest": "#31353c",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-container": "#9fb5e7",
+                        "outline": "#8c909f",
+                        "tertiary": "#ffb786",
+                        "on-background": "#dfe2eb",
+                        "surface-dim": "#10141a",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#304671",
+                        "accent": "#4da6ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glow-button {
+            box-shadow: 0 0 20px rgba(77, 142, 255, 0.3);
+        }
+        .dot-pattern {
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar for markdown content */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1c2026; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #424754; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8c909f; 
+        }
+        
+        .markdown-body h1 { font-size: 2em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; border-bottom: 1px solid #31353c; padding-bottom: 0.3em; }
+        .markdown-body h2 { font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+        .markdown-body h3 { font-size: 1.25em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+        .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
+        .markdown-body ul { list-style-type: disc; margin-left: 2em; margin-bottom: 1em; }
+        .markdown-body ol { list-style-type: decimal; margin-left: 2em; margin-bottom: 1em; }
+        .markdown-body a { color: #4da6ff; text-decoration: none; }
+        .markdown-body a:hover { text-decoration: underline; }
+        .markdown-body code { background-color: #262a31; padding: 0.2em 0.4em; border-radius: 3px; font-family: "JetBrains Mono", monospace; font-size: 85%; }
+        .markdown-body pre { background-color: #262a31; padding: 1em; border-radius: 6px; overflow-x: auto; margin-bottom: 1em; }
+        .markdown-body pre code { background-color: transparent; padding: 0; border-radius: 0; }
+        .markdown-body blockquote { border-left: 4px solid #4da6ff; padding-left: 1em; color: #8c909f; margin-bottom: 1em; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col antialiased">
+    
+    <!-- VIEW 1: LANDING PAGE -->
+    <div id="view-landing" class="flex flex-col min-h-screen">
+        <header class="bg-[#10141a] flex justify-between items-center w-full px-6 h-16 fixed top-0 z-50 border-b border-outline-variant/10">
+            <div class="flex items-center gap-6">
+                <div class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-accent" style="font-variation-settings: 'FILL' 1;">terminal</span>
+                    <span>Codebase Agent</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="bg-[#1c2026] text-accent px-4 py-1.5 rounded text-sm font-medium hover:bg-[#31353c] transition-colors border border-accent/20">Documentation</button>
+            </div>
+        </header>
+
+        <main class="flex-grow flex items-center justify-center px-4 py-20 mt-16 relative">
+            <!-- Central Container -->
+            <div class="w-full max-w-3xl flex flex-col items-center text-center z-10">
+                <!-- Branding Header -->
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center border border-outline-variant/20 shadow-lg">
+                        <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface">
+                        Codebase Onboarding Agent
+                    </h1>
+                </div>
+                
+                <!-- Subheading -->
+                <p class="text-lg md:text-xl text-on-surface-variant max-w-2xl mb-12 font-medium">
+                    Paste a GitHub repo URL. Get a senior dev's tour of the codebase in seconds.
+                </p>
+                
+                <!-- Input System -->
+                <div class="w-full relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary-container/20 rounded-xl blur opacity-30 group-focus-within:opacity-100 transition duration-500"></div>
+                    <form id="analyze-form" class="relative flex items-center bg-surface-container-low border border-outline-variant/30 rounded-xl p-2 h-16 shadow-2xl focus-within:border-primary/50 transition-all">
+                        <div class="pl-4 pr-3 flex items-center">
+                            <span class="material-symbols-outlined text-on-surface-variant text-2xl">link</span>
+                        </div>
+                        <input id="repo-url-input" class="bg-transparent border-none outline-none focus:ring-0 w-full text-on-surface font-mono text-lg placeholder:text-outline/50" placeholder="https://github.com/fastapi/fastapi" type="text" autocomplete="off" required/>
+                        <button type="submit" class="glow-button bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-label font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+                            Analyze
+                            <span class="material-symbols-outlined font-bold">arrow_forward</span>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Pills Section -->
+                <div class="flex flex-wrap justify-center gap-3 mt-8">
+                    <span class="text-on-surface-variant font-label text-sm font-medium mr-2 flex items-center">Try:</span>
+                    <button class="try-btn bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-lg text-sm font-mono border border-outline-variant/10 hover:bg-surface-variant hover:text-primary transition-colors">
+                        https://github.com/fastapi/fastapi
+                    </button>
+                    <button class="try-btn bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-lg text-sm font-mono border border-outline-variant/10 hover:bg-surface-variant hover:text-primary transition-colors">
+                        https://github.com/vercel/next.js
+                    </button>
+                    <button class="try-btn bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-lg text-sm font-mono border border-outline-variant/10 hover:bg-surface-variant hover:text-primary transition-colors">
+                        https://github.com/expressjs/express
+                    </button>
+                </div>
+            </div>
+            <!-- Atmosphere Texture -->
+            <div class="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="w-full py-8 border-t border-outline-variant/5 bg-surface flex flex-col items-center gap-4 z-10">
+            <div class="flex items-center gap-2 text-outline/40 font-label text-xs tracking-widest uppercase">
+                <span>Powered by</span>
+                <div class="flex items-center gap-1 text-on-surface-variant/60">
+                    <span class="font-bold">Gemini 2.0 Flash</span>
+                    <span class="text-outline/20">+</span>
+                    <span class="font-bold">LangGraph</span>
+                </div>
+            </div>
+            <!-- Status Indicator -->
+            <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/10">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[10px] font-mono text-on-surface-variant uppercase tracking-tighter">System Ready</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- VIEW 2: LOADING / INTELLIGENCE GATHERING -->
+    <div id="view-loading" class="hidden flex-col h-screen overflow-hidden dot-pattern">
+        <header class="flex items-center justify-between p-6 w-full">
+            <div class="flex items-center gap-4">
+                <div class="text-accent font-bold text-xl font-headline flex items-center gap-2">
+                    <span class="material-symbols-outlined pb-1">memory</span>
+                    Analysis Engine
+                </div>
+                <div class="h-6 w-px bg-outline-variant/30"></div>
+                <div class="flex items-center gap-2 text-sm text-on-surface-variant font-mono bg-surface-container px-3 py-1.5 rounded-md border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-[1rem]">link</span>
+                    <span id="loading-repo-display">github.com/repo</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow flex flex-col items-center justify-center -mt-20">
+            <h2 class="text-3xl font-bold mb-2">Intelligence Gathering</h2>
+            <p class="text-on-surface-variant/60 text-sm tracking-[0.2em] font-label uppercase mb-16">Processing Repository Architecture</p>
+
+            <div class="relative w-full max-w-md">
+                <!-- Vertical Line -->
+                <div class="absolute left-6 top-6 bottom-6 w-px bg-outline-variant/20"></div>
+
+                <!-- Steps Container -->
+                <div class="flex flex-col gap-8 relative z-10 pl-2">
+                    
+                    <!-- Step 1: Clone -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-parse_structure">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Cloning repo</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Fetching source files...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Tech Stack -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-identify_tech_stack">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Identifying stack</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Detecting languages and frameworks...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Entry Points -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-find_entry_points">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Finding entry points</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Locating primary invocation routes...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Summarize Modules -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-summarize_modules">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Summarizing modules</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Running semantic decomposition...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Data Flow -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-trace_data_flow">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Tracing data flow</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Mapping architectural pathways...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Gotchas -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-extract_gotchas">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Extracting gotchas</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Identifying anti-patterns...</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 7: Compile -->
+                    <div class="flex items-start gap-6 step-item opacity-50 transition-opacity duration-300" id="step-compile_report">
+                        <div class="step-icon w-10 h-10 rounded-full border-2 border-outline-variant/30 bg-surface flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                            <span class="material-symbols-outlined text-sm">radio_button_unchecked</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-on-surface">Compiling report</h3>
+                            <p class="text-on-surface-variant/60 text-sm font-mono mt-1 step-desc">Generating final intelligence...</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/10 text-xs font-mono text-on-surface-variant/60">
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                <span id="loading-status-text">Connecting to intelligence engine...</span>
+            </div>
+            <div>MEMORY <span class="bg-accent/20 w-16 h-1 inline-block ml-2 rounded"><span class="bg-accent w-1/2 h-full block rounded"></span></span> v2.4.0-stable</div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: DASHBOARD REPORT -->
+    <div id="view-dashboard" class="hidden flex-col h-screen overflow-hidden bg-surface-dim">
+        <div class="flex h-full w-full">
+            
+            <!-- Sidebar -->
+            <aside class="w-72 bg-surface border-r border-outline-variant/10 flex flex-col shrink-0">
+                <div class="p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-accent/20 text-accent">
+                            <span class="material-symbols-outlined">terminal</span>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-accent font-headline tracking-wide">Analysis Engine</h2>
+                            <p class="text-[10px] uppercase font-mono text-on-surface-variant/60">v2.4.0-stable</p>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="flex-grow px-4 py-2 space-y-1">
+                    <a href="#overview" class="tab-link active flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary-container/10 border-l-2 border-accent text-accent font-medium transition-colors">
+                        <span class="material-symbols-outlined text-lg">map</span>
+                        Overview
+                    </a>
+                    <a href="#entry-points" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-lg">login</span>
+                        Entry Points
+                    </a>
+                    <a href="#module-map" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-lg">category</span>
+                        Module Map
+                    </a>
+                    <a href="#data-flow" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        Data Flow
+                    </a>
+                    <a href="#gotchas" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-lg">warning</span>
+                        Gotchas
+                    </a>
+                    <a href="#search" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                        <span class="material-symbols-outlined text-lg">search</span>
+                        Search Codebase
+                    </a>
+                </nav>
+
+                <div class="p-6 border-t border-outline-variant/10 space-y-4">
+                    <button id="btn-new-analysis" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-outline-variant/20 hover:bg-surface-container text-sm font-medium transition-colors text-on-surface">
+                        <span class="material-symbols-outlined text-sm">add</span> New Analysis
+                    </button>
+                    <div class="flex items-center gap-4 text-sm text-on-surface-variant/80">
+                        <a href="#" class="flex items-center gap-1 hover:text-accent transition-colors"><span class="material-symbols-outlined text-[16px]">settings</span> Settings</a>
+                        <a href="#" class="flex items-center gap-1 hover:text-accent transition-colors"><span class="material-symbols-outlined text-[16px]">description</span> Docs</a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-grow flex flex-col bg-surface-container-lowest h-full overflow-hidden">
+                <!-- Top Header -->
+                <header class="h-20 px-8 flex items-center justify-between border-b border-outline-variant/10 shrink-0">
+                    <div class="flex items-center gap-4">
+                        <h1 id="dash-repo-name" class="text-2xl font-bold font-headline">user/repo</h1>
+                        <div id="dash-tech-pills" class="flex items-center gap-2">
+                            <!-- Badges will be injected here -->
+                        </div>
+                        <div class="text-xs font-mono text-outline/50 ml-4 hidden md:block">/home/runtime/analytics-engine/core-v2</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="btn-clear" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors text-sm font-medium">
+                            <span class="material-symbols-outlined text-lg">delete</span> Clear/New Repo
+                        </button>
+                        <button class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent text-background font-bold hover:brightness-110 transition-colors text-sm">
+                            <span class="material-symbols-outlined text-lg">content_copy</span> Copy Report
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Scrollable Content Container -->
+                <div class="flex-grow overflow-y-auto p-8 relative">
+                    <div class="max-w-5xl mx-auto space-y-12 pb-20">
+                        
+                        <!-- TAB: Overview -->
+                        <div id="tab-overview" class="tab-content block">
+                            <!-- Main Report Markdown from Agent -->
+                            <div class="border-l-4 border-accent pl-6 py-1 mb-10">
+                                <h2 class="text-2xl font-semibold text-on-surface/90 leading-snug">
+                                    Comprehensive Codebase Analysis Report
+                                </h2>
+                            </div>
+                            
+                            <!-- Detailed Report will render here -->
+                            <div id="dash-report-content" class="markdown-body text-on-surface-variant bg-surface p-8 rounded-xl border border-outline-variant/10 shadow-lg">
+                                <!-- Loading skeleton -->
+                                <div class="animate-pulse space-y-4">
+                                    <div class="h-4 bg-outline-variant/20 rounded w-3/4"></div>
+                                    <div class="h-4 bg-outline-variant/20 rounded w-full"></div>
+                                    <div class="h-4 bg-outline-variant/20 rounded w-5/6"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Entry Points -->
+                        <div id="tab-entry-points" class="tab-content hidden">
+                            <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
+                                <span class="material-symbols-outlined">login</span> Entry Points
+                            </div>
+                            <div id="dash-entry-points" class="markdown-body bg-surface p-8 rounded-xl border border-outline-variant/10"></div>
+                        </div>
+
+                        <!-- TAB: Module Map -->
+                        <div id="tab-module-map" class="tab-content hidden">
+                            <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
+                                <span class="material-symbols-outlined">category</span> Module Map Architecture
+                            </div>
+                            <div id="dash-module-map" class="markdown-body bg-surface p-8 rounded-xl border border-outline-variant/10"></div>
+                        </div>
+
+                        <!-- TAB: Data Flow -->
+                        <div id="tab-data-flow" class="tab-content hidden">
+                            <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
+                                <span class="material-symbols-outlined">swap_horiz</span> Data Flow Visualization
+                            </div>
+                            <div id="dash-data-flow" class="markdown-body bg-surface p-8 rounded-xl border border-outline-variant/10"></div>
+                        </div>
+
+                        <!-- TAB: Gotchas -->
+                        <div id="tab-gotchas" class="tab-content hidden">
+                            <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
+                                <span class="material-symbols-outlined">warning</span> Critical Gotchas
+                            </div>
+                            <div class="bg-[#2A1E0D] border-l-4 border-amber-500 p-8 rounded-r-xl rounded-l-sm">
+                                <div id="dash-gotchas" class="markdown-body text-amber-50/90"></div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Search -->
+                        <div id="tab-search" class="tab-content hidden">
+                            <div class="flex items-center gap-2 text-on-surface-variant mb-6 font-label tracking-widest text-sm uppercase">
+                                <span class="material-symbols-outlined">search</span> Semantic Intelligence Search
+                            </div>
+                            
+                            <div class="relative flex items-center bg-surface border border-outline-variant/30 rounded-xl p-2 shadow-lg focus-within:border-accent/50 transition-all mb-8">
+                                <div class="pl-4 pr-3 flex items-center">
+                                    <span class="material-symbols-outlined text-accent text-2xl">search</span>
+                                </div>
+                                <input id="search-input" class="bg-transparent border-none outline-none focus:ring-0 w-full text-on-surface font-body text-lg placeholder:text-outline-variant" placeholder="Ask questions like: Where is the authentication logic?" type="text" autocomplete="off"/>
+                                <button id="btn-search" class="bg-surface-container text-on-surface font-label font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-surface-container-high active:scale-95 transition-all">
+                                    Query
+                                </button>
+                            </div>
+                            
+                            <div id="search-results" class="space-y-4">
+                                <!-- Results populate here -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

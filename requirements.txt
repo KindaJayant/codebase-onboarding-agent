@@ -1,4 +1,5 @@
-streamlit
+fastapi
+uvicorn
 langgraph
 google-generativeai
 gitpython

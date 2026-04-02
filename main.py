@@ -68,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 })
                 final_state.update(updates)
 
-        # Build Vector Store (now uses local embeddings, no API key needed)
+        # Build Vector Store (uses local embeddings, no API key needed)
         await websocket.send_json({"type": "progress", "node": "vectorstore", "message": "Indexing vectorstore..."})
         try:
             await asyncio.to_thread(
@@ -77,14 +77,37 @@ async def websocket_endpoint(websocket: WebSocket):
             )
         except Exception as e:
             print("Vectorstore error:", e)
+            import traceback
+            traceback.print_exc()
+
+        # Build a JSON-safe state to send to the frontend
+        # (metrics dict is always JSON-safe, but tech_stack might have issues)
+        safe_state = {}
+        for key in ['report', 'entry_points', 'module_summaries', 'data_flow', 'caveats', 'metrics']:
+            if key in final_state:
+                safe_state[key] = final_state[key]
+        
+        # Tech stack needs special handling
+        if 'tech_stack' in final_state:
+            ts = final_state['tech_stack']
+            if isinstance(ts, dict):
+                safe_state['tech_stack'] = ts
+            else:
+                safe_state['tech_stack'] = {'raw': str(ts)}
+        
+        # Include repo_name for search
+        safe_state['repo_name'] = repo_name
             
-        await websocket.send_json({"type": "complete", "state": final_state})
+        await websocket.send_json({"type": "complete", "state": safe_state})
         await websocket.close()
         
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
-        await websocket.send_json({"type": "error", "message": str(e)})
+        try:
+            await websocket.send_json({"type": "error", "message": str(e)})
+        except Exception:
+            pass
         import traceback
         traceback.print_exc()
 

@@ -19,7 +19,7 @@ def build_graph():
     wf.add_node("find_entry_points",   nodes.find_entry_points)
     wf.add_node("summarize_modules",   nodes.summarize_modules)
     wf.add_node("trace_data_flow",     nodes.trace_data_flow)
-    wf.add_node("extract_gotchas",     nodes.extract_gotchas)
+    wf.add_node("extract_caveats",     nodes.extract_caveats)
     wf.add_node("compile_report",      nodes.compile_report)
 
     # ── linear pipeline ─────────────────────────────────────────────────
@@ -28,8 +28,8 @@ def build_graph():
     wf.add_edge("identify_tech_stack", "find_entry_points")
     wf.add_edge("find_entry_points",   "summarize_modules")
     wf.add_edge("summarize_modules",   "trace_data_flow")
-    wf.add_edge("trace_data_flow",     "extract_gotchas")
-    wf.add_edge("extract_gotchas",     "compile_report")
+    wf.add_edge("trace_data_flow",     "extract_caveats")
+    wf.add_edge("extract_caveats",     "compile_report")
     wf.add_edge("compile_report",      END)
 
     return wf.compile()

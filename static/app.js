@@ -26,7 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashEntryPoints = document.getElementById('dash-entry-points');
     const dashModuleMap = document.getElementById('dash-module-map');
     const dashDataFlow = document.getElementById('dash-data-flow');
-    const dashGotchas = document.getElementById('dash-gotchas');
+    const dashCaveats = document.getElementById('dash-caveats');
+    
+    // Metric cards
+    const metricTotalFiles = document.getElementById('metric-total-files');
+    const metricLanguages = document.getElementById('metric-languages');
+    const metricLangBreakdown = document.getElementById('metric-lang-breakdown');
+    const metricLoc = document.getElementById('metric-loc');
+    const metricDeps = document.getElementById('metric-deps');
     
     // Dashboard Actions
     const btnClear = document.getElementById('btn-clear');
@@ -38,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchResults = document.getElementById('search-results');
     
     let currentRepoName = '';
+    let currentRepoShortName = '';
     
     // --- View Navigation ---
     function showView(viewId) {
@@ -57,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetApp() {
         urlInput.value = '';
         currentRepoName = '';
+        currentRepoShortName = '';
         
         // Reset steps
         document.querySelectorAll('.step-item').forEach(step => {
@@ -118,11 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const pathParts = parsed.pathname.split('/').filter(Boolean);
             if (pathParts.length >= 2) {
                 currentRepoName = `${pathParts[0]}/${pathParts[1].replace('.git', '')}`;
+                currentRepoShortName = pathParts[1].replace('.git', '');
             } else {
                 currentRepoName = pathParts[0] || url;
+                currentRepoShortName = currentRepoName;
             }
         } catch {
             currentRepoName = url;
+            currentRepoShortName = url;
         }
 
         loadingRepoDisplay.textContent = 'github.com/' + currentRepoName;
@@ -154,21 +166,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startAnalysis(url) {
-        // Setup WS
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws/analyze`;
         const ws = new WebSocket(wsUrl);
 
-        // Track sequence of nodes to mark previous as done
         const nodeOrder = [
             'parse_structure', 'identify_tech_stack', 'find_entry_points', 
-            'summarize_modules', 'trace_data_flow', 'extract_gotchas', 'compile_report'
+            'summarize_modules', 'trace_data_flow', 'extract_caveats', 'compile_report'
         ];
         let currentNodeIdx = -1;
 
         ws.onopen = () => {
             ws.send(JSON.stringify({ repo_url: url }));
-            // Activate first node artificially
             setStepState(nodeOrder[0], 'active');
             currentNodeIdx = 0;
         };
@@ -183,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (data.type === 'progress') {
-                // If it's a known node, mark the previous one done, current one active
                 const nodeName = data.node;
                 const idx = nodeOrder.indexOf(nodeName);
                 
@@ -215,7 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function finalizeDashboard(state) {
         dashRepoName.textContent = currentRepoName;
         
-        // render pills
+        // Store repo short name from server for search
+        if (state.repo_name) {
+            currentRepoShortName = state.repo_name;
+        }
+        
+        // Render tech pills
         dashTechPills.innerHTML = '';
         if (state.tech_stack) {
             const ts = state.tech_stack;
@@ -227,12 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Render Markdown
+        // Render dynamic metrics
+        if (state.metrics) {
+            const m = state.metrics;
+            if (metricTotalFiles) metricTotalFiles.textContent = m.total_files?.toLocaleString() || '—';
+            if (metricLanguages) metricLanguages.textContent = m.languages || '—';
+            if (metricLangBreakdown) metricLangBreakdown.textContent = m.lang_breakdown || 'N/A';
+            if (metricLoc) metricLoc.textContent = m.loc?.toLocaleString() || '—';
+            if (metricDeps) metricDeps.textContent = m.dependencies || '0';
+        }
+
+        // Render Markdown content
         if (state.report) dashReportContent.innerHTML = marked.parse(state.report);
         if (state.entry_points) dashEntryPoints.innerHTML = marked.parse(state.entry_points);
         if (state.module_summaries) dashModuleMap.innerHTML = marked.parse(state.module_summaries);
         if (state.data_flow) dashDataFlow.innerHTML = marked.parse(state.data_flow);
-        if (state.gotchas) dashGotchas.innerHTML = marked.parse(state.gotchas);
+        if (state.caveats) dashCaveats.innerHTML = marked.parse(state.caveats);
     }
 
     // --- Search Logic ---
@@ -248,13 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    repo_name: currentRepoName.split('/')[1] || currentRepoName, 
+                    repo_name: currentRepoShortName, 
                     query: query 
                 })
             });
             const data = await res.json();
             
-            if (data.documents && data.documents[0] && data.documents[0].length > 0) {
+            if (data.error) {
+                searchResults.innerHTML = `<div class="text-error p-4">${data.error}</div>`;
+            } else if (data.documents && data.documents[0] && data.documents[0].length > 0) {
                 const docs = data.documents[0];
                 const metas = data.metadatas[0];
                 
@@ -274,9 +299,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchResults.innerHTML = `<div class="text-on-surface-variant p-4 text-center">No structural matches found in the codebase.</div>`;
             }
         } catch (e) {
-            searchResults.innerHTML = `<div class="text-error p-4">Error executing semantic search.</div>`;
+            searchResults.innerHTML = `<div class="text-error p-4">Error executing semantic search: ${e.message}</div>`;
         }
         
         btnSearch.innerHTML = `Query`;
+    });
+    
+    // Allow Enter key in search
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            btnSearch.click();
+        }
     });
 });

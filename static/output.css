@@ -1701,11 +1701,6 @@ input:where([type='file']):focus {
   color: rgb(255 251 235 / 0.9);
 }
 
-.text-amber-500 {
-  --tw-text-opacity: 1;
-  color: rgb(245 158 11 / var(--tw-text-opacity, 1));
-}
-
 .text-background {
   --tw-text-opacity: 1;
   color: rgb(16 20 26 / var(--tw-text-opacity, 1));
@@ -1833,10 +1828,6 @@ input:where([type='file']):focus {
 .outline-none {
   outline: 2px solid transparent;
   outline-offset: 2px;
-}
-
-.outline {
-  outline-style: solid;
 }
 
 .blur {

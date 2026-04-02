@@ -11,6 +11,7 @@ import os
 import traceback
 import tempfile
 import time
+from collections import Counter
 
 from openai import OpenAI
 
@@ -91,10 +92,79 @@ def _collect_code_info(repo_path: str) -> str:
     return "\n\n".join(summaries) if summaries else "(tree-sitter analysis unavailable)"
 
 
+def _compute_metrics(repo_path: str) -> dict:
+    """Compute real repository metrics: file count, languages, LOC, dependencies."""
+    total_files = 0
+    ext_counter = Counter()
+    total_loc = 0
+    dep_count = 0
+
+    for root, dirs, files in os.walk(repo_path):
+        dirs[:] = [d for d in dirs if d not in repo_utils.EXCLUDE_DIRS]
+        for fname in files:
+            total_files += 1
+            _, ext = os.path.splitext(fname)
+            if ext:
+                ext_counter[ext] += 1
+            
+            # Count lines for code files
+            fpath = os.path.join(root, fname)
+            if ext in ('.py', '.js', '.ts', '.tsx', '.jsx', '.java', '.go', '.rs', '.rb', '.css', '.html', '.md'):
+                try:
+                    with open(fpath, 'r', encoding='utf-8', errors='replace') as fh:
+                        total_loc += sum(1 for _ in fh)
+                except Exception:
+                    pass
+
+            # Count dependencies
+            if fname == 'requirements.txt':
+                try:
+                    with open(fpath, 'r', encoding='utf-8', errors='replace') as fh:
+                        dep_count += sum(1 for line in fh if line.strip() and not line.startswith('#'))
+                except Exception:
+                    pass
+            elif fname == 'package.json':
+                try:
+                    with open(fpath, 'r', encoding='utf-8', errors='replace') as fh:
+                        pkg = json.loads(fh.read())
+                        dep_count += len(pkg.get('dependencies', {}))
+                        dep_count += len(pkg.get('devDependencies', {}))
+                except Exception:
+                    pass
+
+    # Build language breakdown from top extensions
+    EXT_TO_LANG = {
+        '.py': 'Python', '.js': 'JavaScript', '.ts': 'TypeScript',
+        '.tsx': 'TSX', '.jsx': 'JSX', '.java': 'Java', '.go': 'Go',
+        '.rs': 'Rust', '.rb': 'Ruby', '.css': 'CSS', '.html': 'HTML',
+        '.md': 'Markdown', '.json': 'JSON', '.yaml': 'YAML', '.yml': 'YAML',
+        '.toml': 'TOML', '.sql': 'SQL', '.sh': 'Shell', '.c': 'C', '.cpp': 'C++',
+    }
+
+    code_exts = {k: v for k, v in ext_counter.items() if k in EXT_TO_LANG}
+    total_code_files = sum(code_exts.values()) or 1
+    top_langs = sorted(code_exts.items(), key=lambda x: x[1], reverse=True)[:4]
+    
+    lang_breakdown = []
+    for ext, count in top_langs:
+        pct = round(count / total_code_files * 100)
+        lang_breakdown.append(f"{EXT_TO_LANG.get(ext, ext)} ({pct}%)")
+
+    unique_langs = len(set(EXT_TO_LANG.get(ext, ext) for ext in code_exts.keys()))
+
+    return {
+        'total_files': total_files,
+        'languages': unique_langs,
+        'lang_breakdown': ', '.join(lang_breakdown) if lang_breakdown else 'N/A',
+        'loc': total_loc,
+        'dependencies': dep_count,
+    }
+
+
 # ── nodes ────────────────────────────────────────────────────────────────────
 
 def parse_structure(state: dict) -> dict:
-    """Clone the repo, generate the file tree, read key files, run tree-sitter."""
+    """Clone the repo, generate the file tree, read key files, run tree-sitter, compute metrics."""
     try:
         repo_name = state['repo_name']
         repo_url = state['repo_url']
@@ -107,12 +177,14 @@ def parse_structure(state: dict) -> dict:
         structure = repo_utils.get_file_tree(repo_path)
         key_files_content = repo_utils.read_key_files(repo_path)
         code_info = _collect_code_info(repo_path)
+        metrics = _compute_metrics(repo_path)
 
         return {
             'repo_path': repo_path,
             'structure': structure,
             'key_files_content': key_files_content,
             'code_info': code_info,
+            'metrics': metrics,
         }
     except Exception as e:
         return {'error': f"Clone/parse failed: {e}\n{traceback.format_exc()}"}
@@ -163,15 +235,15 @@ def trace_data_flow(state: dict) -> dict:
     return {'data_flow': _call_llm(state['api_key'], prompt)}
 
 
-def extract_gotchas(state: dict) -> dict:
+def extract_caveats(state: dict) -> dict:
     if state.get('error'):
         return {}
-    prompt = prompts.GOTCHAS_PROMPT.format(
+    prompt = prompts.CAVEATS_PROMPT.format(
         structure=state['structure'],
         tech_stack=json.dumps(state.get('tech_stack', {}), indent=2),
         key_files_content=state['key_files_content'],
     )
-    return {'gotchas': _call_llm(state['api_key'], prompt)}
+    return {'caveats': _call_llm(state['api_key'], prompt)}
 
 
 def compile_report(state: dict) -> dict:
@@ -183,7 +255,7 @@ def compile_report(state: dict) -> dict:
         entry_points=state.get('entry_points', ''),
         module_summaries=state.get('module_summaries', ''),
         data_flow=state.get('data_flow', ''),
-        gotchas=state.get('gotchas', ''),
+        caveats=state.get('caveats', ''),
         structure=state['structure'],
     )
     return {'report': _call_llm(state['api_key'], prompt)}

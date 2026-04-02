@@ -78,8 +78,8 @@ If you can, provide a Mermaid flowchart diagram as well.
 {structure}
 """
 
-GOTCHAS_PROMPT = """\
-Identify potential "gotchas" and things that would trip up a new developer:
+CAVEATS_PROMPT = """\
+Identify potential caveats, risks, and things that would trip up a new developer:
 - Non-obvious configuration requirements
 - Complex dependency chains
 - Environment variables that MUST be set
@@ -109,7 +109,7 @@ Sections:
 3. **Entry Points & How to Run** — how to start / invoke the application
 4. **Architecture & Module Map** — how the code is organized
 5. **Data Flow** — end-to-end flow for a core feature (include Mermaid if possible)
-6. **Developer Gotchas & Onboarding Tips** — things a new dev must know
+6. **Caveats & Onboarding Tips** — things a new dev must know
 
 ---
 ### Tech Stack (raw)
@@ -124,8 +124,8 @@ Sections:
 ### Data Flow
 {data_flow}
 
-### Gotchas
-{gotchas}
+### Caveats
+{caveats}
 
 ### File Tree
 {structure}

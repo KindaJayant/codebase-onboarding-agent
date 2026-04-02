@@ -7,7 +7,7 @@ A premium, LangGraph-powered GitHub repository analysis tool designed to generat
 - 🧠 **LangGraph Orchestration**: Employs a robust, Directed Acyclic Graph (DAG) state machine to break down unknown codebases logically.
 - 🌳 **Tree-sitter Parsing**: Lazily loads and parses structure via ASTs for `Python`, `JavaScript`, and `TypeScript`.
 - 🔍 **Semantic Search Engine**: Incorporates `ChromaDB` offline vector store and Gemini embeddings for lightning-fast codebase search.
-- 💅 **Premium Streamlit UI**: A clean, unified dark mode dashboard that groups insights into `Overview`, `Entry Points`, `Architecture`, and `Data Flow`.
+- 💅 **Custom UI Architecture**: A deeply integrated FastAPI backend serving a gorgeous, dark-mode Tailwind CSS Single Page Application via WebSockets.
 - 🤖 **Gemini 2.0 Native**: Skips heavy LangChain wrappers and integrates directly with the `google-generativeai` SDK.
 
 ## 🚀 Getting Started
@@ -33,13 +33,14 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 4. **Launch Application**
 ```bash
-streamlit run app.py
+uvicorn main:app --reload
 ```
-Open up the `localhost` URL, punch in a Github repository link into the sidebar, and let the agent get to work!
+Open up **`http://localhost:8000`** in your browser, punch in a Github repository link, and let the agent get to work!
 
 ## 📂 Project Structure
 
-- `app.py`: Contains the central Streamlit frontend.
+- `main.py`: Contains the FastAPI server, WebSocket endpoints, and REST routes.
+- `static/`: Contains the Tailwind CSS compiled files, `index.html`, and Vanilla JS application logic.
 - `agent/`: LangGraph logic (`nodes.py`, `graph.py`, `state.py`, `prompts.py`).
 - `utils/`: Utilities for cloning (`repo.py`), code ast (`parser.py`), and semantic indexing (`vectorstore.py`).
 - `db/`: Locally instantiated ChromaDB index directory.

@@ -6,7 +6,7 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-2D3748?style=for-the-badge&logo=langchain)](https://langchain-ai.github.io/langgraph/)
-[![OpenRouter](https://img.shields.io/badge/OpenRouter-Qwen_3.6-6929F4?style=for-the-badge)](https://openrouter.ai/)
+[![OpenRouter](https://img.shields.io/badge/OpenRouter-Qwen_3_Coder-6929F4?style=for-the-badge)](https://openrouter.ai/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-522D80?style=for-the-badge)](https://www.trychroma.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
@@ -19,7 +19,7 @@
 - 🔍 **Local Semantic Memory**: Implements **ChromaDB** with **local ONNX-backed embeddings** (`all-MiniLM-L6-v2`) for instant, private, and free semantic code search.
 - ⚡ **Real-time Pipeline Streaming**: A modern **FastAPI** backend streams live analysis progress directly to the UI via **WebSockets**.
 - 💅 **High-Fidelity Dashboard**: A gorgeous, dark-mode SPA built with **Tailwind CSS**, featuring dynamic metrics, interactive module maps, and architecture visualizations.
-- 🤖 **Infinite Context via OpenRouter**: Seamlessly routes through 100+ models, currently optimized for **Qwen 3.6 Plus Preview** to handle enterprise-scale repositories.
+- 🤖 **Infinite Context via OpenRouter**: Seamlessly routes through 100+ models, currently optimized for **Qwen-3 Coder** to handle enterprise-scale repositories.
 
 ---
 
@@ -42,9 +42,9 @@ graph TD
     I --> J[compile_report]
     end
     
-    J -->|JSON State| K[Tailwind Dashboard]
-    D -.->|Sync| L[(ChromaDB Vector Store)]
-    L -.->|REST| M[/api/search]
+    J -->|JSON State| K["Tailwind Dashboard"]
+    D -.->|Sync| L[("ChromaDB Vector Store")]
+    L -.->|REST| M["/api/search"]
 ```
 
 ---

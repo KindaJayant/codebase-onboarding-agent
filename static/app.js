@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dashboard Actions
     const btnClear = document.getElementById('btn-clear');
     const btnNewAnalysis = document.getElementById('btn-new-analysis');
+    const btnCopyReport = document.getElementById('btn-copy-report');
     
     // Search
     const searchInput = document.getElementById('search-input');
@@ -114,6 +115,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnClear.addEventListener('click', resetApp);
     btnNewAnalysis.addEventListener('click', resetApp);
+
+    btnCopyReport.addEventListener('click', () => {
+        const text = dashReportContent.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btnCopyReport.innerHTML;
+            btnCopyReport.innerHTML = `<span class="material-symbols-outlined text-lg">check</span> Copied!`;
+            setTimeout(() => {
+                btnCopyReport.innerHTML = originalHtml;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            alert('Failed to copy to clipboard');
+        });
+    });
 
     // --- WebSocket Logic ---
     analyzeForm.addEventListener('submit', (e) => {

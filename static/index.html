@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-4">
-                <button class="bg-[#1c2026] text-accent px-4 py-1.5 rounded text-sm font-medium hover:bg-[#31353c] transition-colors border border-accent/20">Documentation</button>
+                <button id="btn-docs-landing" onclick="window.open('https://github.com/KindaJayant/codebase-onboarding-agent', '_blank')" class="bg-[#1c2026] text-accent px-4 py-1.5 rounded text-sm font-medium hover:bg-[#31353c] transition-colors border border-accent/20">Documentation</button>
             </div>
         </header>
 
@@ -128,7 +128,7 @@
             <div class="flex items-center gap-2 text-outline/40 font-label text-xs tracking-widest uppercase">
                 <span>Powered by</span>
                 <div class="flex items-center gap-1 text-on-surface-variant/60">
-                    <span class="font-bold">Gemini 2.0 Flash</span>
+                    <span class="font-bold">Qwen 2.5</span>
                     <span class="text-outline/20">+</span>
                     <span class="font-bold">LangGraph</span>
                 </div>
@@ -309,7 +309,7 @@
                     </button>
                     <div class="flex items-center gap-4 text-sm text-on-surface-variant/80">
                         <a href="#" class="flex items-center gap-1 hover:text-accent transition-colors"><span class="material-symbols-outlined text-[16px]">settings</span> Settings</a>
-                        <a href="#" class="flex items-center gap-1 hover:text-accent transition-colors"><span class="material-symbols-outlined text-[16px]">description</span> Docs</a>
+                        <a href="https://github.com/KindaJayant/codebase-onboarding-agent" target="_blank" id="btn-docs-sidebar" class="flex items-center gap-1 hover:text-accent transition-colors"><span class="material-symbols-outlined text-[16px]">description</span> Docs</a>
                     </div>
                 </div>
             </aside>
@@ -329,7 +329,7 @@
                         <button id="btn-clear" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-outline-variant/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors text-sm font-medium">
                             <span class="material-symbols-outlined text-lg">delete</span> Clear/New Repo
                         </button>
-                        <button class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent text-background font-bold hover:brightness-110 transition-colors text-sm">
+                        <button id="btn-copy-report" class="flex items-center gap-2 px-5 py-2 rounded-lg bg-accent text-background font-bold hover:brightness-110 transition-colors text-sm">
                             <span class="material-symbols-outlined text-lg">content_copy</span> Copy Report
                         </button>
                     </div>

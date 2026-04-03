@@ -20,7 +20,7 @@ from utils import repo as repo_utils
 from utils import parser as parser_utils
 
 # ── Model Configuration ─────────────────────────────────────────────────────
-OPENROUTER_MODEL = "qwen/qwen3.6-plus-preview:free"
+OPENROUTER_MODEL = "qwen/qwen-2.5-72b-instruct"
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
